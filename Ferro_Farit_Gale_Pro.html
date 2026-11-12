@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1280, initial-scale=0.35, minimum-scale=0.25, maximum-scale=3.0, user-scalable=yes">
+    <title>Ferro Farit Gale Pro — Software POS, Bodega FIFO & Facturación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-app: #e2e8f0;
+            --bg-surface: #ffffff;
+            --primary: #0f172a;
+            --primary-mid: #1e293b;
+            --accent: #ea580c;
+            --accent-hover: #c2410c;
+            --accent-soft: #fff7ed;
+            --success: #059669;
+            --success-hover: #047857;
+            --success-soft: #ecfdf5;
+            --danger: #dc2626;
+            --danger-soft: #fef2f2;
+            --info: #2563eb;
+            --info-soft: #eff6ff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+            --border-light: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html, body {
+            height: 100vh;
+            min-height: 700px;
+            width: 100%;
+            min-width: 1280px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            height: 62px;
+            background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            border-bottom: 2px solid var(--accent);
+            z-index: 30;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .brand-svg {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(234, 88, 12, 0.45);
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            font-size: 1.02rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+
+        .brand-text span {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            display: block;
+            font-weight: 500;
+        }
+
+        .nav-steps {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 0.28rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .step-btn {
+            padding: 0.42rem 0.8rem;
+            border-radius: 7px;
+            border: none;
+            background: transparent;
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s ease;
+        }
+
+        .step-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .step-btn.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 2px 6px rgba(234, 88, 12, 0.4);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .btn {
+            padding: 0.46rem 0.85rem;
+            border-radius: 7px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.76rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { background: var(--accent-hover); }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: var(--success-hover); }
+
+        .btn-info { background: var(--info); color: white; }
+        .btn-info:hover { background: #1d4ed8; }
+
+        .btn-outline-light {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-outline-light:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .btn-danger-sm {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-danger-sm:hover { background: var(--danger); color: white; }
+
+        .btn-edit-sm {
+            background: var(--info-soft);
+            color: var(--info);
+            border: 1px solid #bfdbfe;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-edit-sm:hover { background: var(--info); color: white; }
+
+        /* CARRUSEL HORIZONTAL DE 4 PANTALLAS */
+        .horizontal-viewport {
+            flex: 1;
+            width: 100%;
+            min-width: 1280px;
+            height: calc(100vh - 62px);
+            min-height: 638px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .horizontal-track {
+            display: flex;
+            width: 400%; /* 4 Pantallas completas lado a lado */
+            height: 100%;
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateX(0%);
+        }
+
+        .screen-slide {
+            width: 25%;
+            height: 100%;
+            padding: 0.8rem 1.1rem;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .slide-nav-bar {
+            height: 44px;
+            margin-top: 0.6rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
+            padding: 0.6rem 0.9rem;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            gap: 0.4rem;
+        }
+
+        .panel-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .panel-body {
+            padding: 0.8rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* SECCIÓN 1: POS */
+        .pos-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 35% 31% 34%;
+            gap: 0.8rem;
+            overflow: hidden;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            margin-bottom: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .search-input-wrap input {
+            width: 100%;
+            padding: 0.65rem 2.2rem 0.65rem 2.3rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .search-input-wrap input:focus {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .search-input-wrap .s-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 0.65rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e2e8f0;
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .results-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+        }
+
+        .res-item {
+            padding: 0.65rem 0.8rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .res-item:hover { background: var(--accent-soft); }
+        .res-item.selected {
+            background: #ffedd5;
+            border-left: 4px solid var(--accent);
+        }
+
+        .res-name { font-size: 0.88rem; font-weight: 700; color: var(--primary); }
+        .res-meta { font-size: 0.73rem; color: var(--text-muted); margin-top: 2px; }
+
+        .selected-price-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: 9px;
+            padding: 0.8rem;
+            margin-bottom: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .spc-name {
+            font-size: 0.98rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .spc-stock {
+            font-size: 0.74rem;
+            color: #cbd5e1;
+            margin-bottom: 0.6rem;
+        }
+
+        .spc-prices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .spc-box {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.45rem 0.65rem;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .spc-box small {
+            display: block;
+            font-size: 0.66rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .spc-box strong {
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: #fb923c;
+        }
+
+        .spc-box strong.pack { color: #34d399; }
+
+        .field { margin-bottom: 0.42rem; }
+        .field label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.16rem;
+        }
+
+        .field input, .field select {
+            width: 100%;
+            padding: 0.42rem 0.6rem;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            outline: none;
+            background: white;
+        }
+
+        .field input:focus, .field select:focus { border-color: var(--accent); }
+
+        .form-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .line-subtotal-box {
+            margin-top: auto;
+            background: var(--accent-soft);
+            border: 1.5px dashed var(--accent);
+            border-radius: 9px;
+            padding: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-scroll {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.79rem;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-align: left;
+            padding: 0.48rem 0.55rem;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        td {
+            padding: 0.48rem 0.55rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        tr.clickable-row {
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+        tr.clickable-row:hover {
+            background: #f1f5f9;
+        }
+        tr.selected-row {
+            background: #ffedd5 !important;
+            outline: 1.5px solid var(--accent);
+        }
+
+        .ticket-bottom {
+            padding-top: 0.7rem;
+            margin-top: 0.6rem;
+            border-top: 2px dashed var(--border);
+            flex-shrink: 0;
+        }
+
+        .total-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .total-banner span {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .total-banner strong {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        /* SECCIÓN 2: REGISTRAR PRODUCTOS + INVENTARIO ACTIVO */
+        .manage-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 42% 58%;
+            gap: 0.85rem;
+            overflow: hidden;
+        }
+
+        .sim-card-green {
+            background: var(--success-soft);
+            border: 1.5px solid #6ee7b7;
+            border-radius: 8px;
+            padding: 0.45rem 0.55rem;
+            margin-bottom: 0.45rem;
+        }
+
+        .sim-4grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.4rem;
+            margin-top: 0.35rem;
+        }
+
+        .sim-cell {
+            background: white;
+            padding: 0.38rem 0.45rem;
+            border-radius: 6px;
+            border: 1px solid #a7f3d0;
+        }
+
+        .sim-cell span { font-size: 0.64rem; color: var(--text-muted); display: block; }
+        .sim-cell strong { font-size: 0.84rem; color: #047857; font-weight: 800; }
+
+        /* Barra de acciones contextuales al tocar una fila */
+        .contextual-action-bar {
+            display: none;
+            background: #fff7ed;
+            border: 1.5px solid #fdba74;
+            border-radius: 8px;
+            padding: 0.45rem 0.7rem;
+            margin-bottom: 0.55rem;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .contextual-action-bar.visible {
+            display: flex;
+        }
+
+        /* SECCIÓN 3: FACTURA */
+        .invoice-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 38% 62%;
+            gap: 0.85rem;
+            overflow: hidden;
+        }
+
+        .invoice-preview-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            background: #cbd5e1;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .invoice-sheet {
+            background: white;
+            width: 100%;
+            max-width: 680px;
+            padding: 1.75rem 2rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            color: #0f172a;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 520px;
+        }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .inv-store-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .inv-logo-img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 4px;
+            background: #f8fafc;
+        }
+
+        .inv-store-details h2 {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #0f172a;
+            text-transform: uppercase;
+        }
+
+        .inv-store-details p {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        .inv-meta-box {
+            text-align: right;
+            font-size: 0.8rem;
+        }
+
+        .inv-meta-box .inv-num {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .inv-client-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+        }
+
+        .inv-table th {
+            background: #0f172a;
+            color: white;
+            font-size: 0.76rem;
+        }
+
+        .inv-table td {
+            font-size: 0.82rem;
+            padding: 0.55rem 0.6rem;
+        }
+
+        .inv-totals {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .inv-total-card {
+            background: #f8fafc;
+            border: 1.5px solid #0f172a;
+            border-radius: 6px;
+            padding: 0.65rem 1.1rem;
+            min-width: 230px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inv-software-watermark {
+            margin-top: 1.5rem;
+            padding-top: 0.65rem;
+            border-top: 1px dashed #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68rem;
+            color: #64748b;
+        }
+
+        /* SECCIÓN 4: BODEGA Y LOTES EN RESERVA (FIFO INTELIGENTE) */
+        .warehouse-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 38% 62%;
+            gap: 0.85rem;
+            overflow: hidden;
+        }
+
+        .badge-same {
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .badge-diff {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .alert-fifo-box {
+            background: #fef2f2;
+            border: 1.5px solid #f87171;
+            border-radius: 8px;
+            padding: 0.6rem 0.85rem;
+            margin-bottom: 0.65rem;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 3.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        .toast.show { display: block; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printableInvoiceSheet, #printableInvoiceSheet * { visibility: visible; }
+            #printableInvoiceSheet {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 100%;
+                box-shadow: none;
+                border: none;
+                padding: 1cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-box">
+            <div class="brand-svg" title="Ferro Farit Gale Pro">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1>Ferro Farit Gale Pro</h1>
+                <span>Ventas, Inventario, Facturación y Bodega FIFO</span>
+            </div>
+        </div>
+
+        <!-- BOTONES DE LAS 4 SECCIONES HORIZONTALES -->
+        <nav class="nav-steps">
+            <button class="step-btn active" id="navBtn0" onclick="goToSlide(0)">
+                1. 🔍 Buscador y Venta
+            </button>
+            <button class="step-btn" id="navBtn1" onclick="goToSlide(1)">
+                2. 📦 Registrar (<span id="topProdCount">0</span>)
+            </button>
+            <button class="step-btn" id="navBtn2" onclick="goToSlide(2)">
+                3. 🧾 Factura
+            </button>
+            <button class="step-btn" id="navBtn3" onclick="goToSlide(3)">
+                4. 🏭 Bodega y Pedidos (<span id="topReserveCount">0</span>)
+            </button>
+        </nav>
+
+        <div class="header-right">
+            <div style="font-size: 0.74rem; text-align: right; margin-right: 0.35rem;">
+                <span style="color: #94a3b8; display: block;">Caja Turno:</span>
+                <strong style="color: #34d399; font-size: 0.88rem;" id="headerTotalSold">$0</strong>
+            </div>
+            <button class="btn btn-outline-light" onclick="exportBackup()" title="Guardar copia de seguridad">
+                💾 Respaldo
+            </button>
+            <label class="btn btn-outline-light" style="cursor:pointer;" title="Cargar respaldo">
+                📂 Cargar
+                <input type="file" accept=".json" style="display:none;" onchange="importBackup(event)">
+            </label>
+        </div>
+    </header>
+
+    <div class="horizontal-viewport">
+        <div class="horizontal-track" id="horizontalTrack">
+
+            <!-- =========================================================
+                 PANTALLA 1: BUSCADOR, SELECCIÓN Y SUMA DE VENTA
+                 ========================================================= -->
+            <section class="screen-slide">
+                <div class="pos-grid">
+                    <!-- Columna 1: Buscador -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🔍 1. Buscador de Productos</div>
+                            <button class="btn btn-accent" style="padding: 0.3rem 0.6rem; font-size: 0.72rem;" onclick="goToSlide(1)">
+                                ➕ Registrar
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="contextual-action-bar" id="searchLongPressBar">
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #9a3412; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%;">
+                                    <span id="lpSearchProdName">--</span>
+                                </span>
+                                <div style="display: flex; gap: 0.35rem;">
+                                    <button class="btn-edit-sm" onclick="editFromLongPress()">✏️ Editar</button>
+                                    <button class="btn-danger-sm" onclick="deleteFromLongPress()">🗑️ Borrar</button>
+                                    <button class="btn" style="background: #e2e8f0; color: #334155; padding: 0.22rem 0.45rem;" onclick="closeSearchLongPressBar()">✕</button>
+                                </div>
+                            </div>
+                            <div class="search-input-wrap">
+                                <span class="s-icon">🔎</span>
+                                <input type="text" id="searchInput" placeholder="Escribe el nombre o inicial del producto..." autocomplete="off">
+                                <button class="search-clear" onclick="clearSearch()" title="Limpiar">✕</button>
+                            </div>
+                            <div class="results-list" id="searchResultsList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Columna 2: Selección y Cantidad -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🧮 2. Selección y Cantidad</div>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">Elige medida y lleva</span>
+                        </div>
+                        <div class="panel-body">
+                            <div class="selected-price-card">
+                                <div class="spc-name" id="selProdName">Selecciona un producto a la izquierda</div>
+                                <div class="spc-stock" id="selProdStock">Inventario disponible: --</div>
+                                <div class="spc-prices">
+                                    <div class="spc-box">
+                                        <small id="selBaseLabel">Precio Unidad</small>
+                                        <strong id="selBasePrice">$0</strong>
+                                    </div>
+                                    <div class="spc-box">
+                                        <small id="selPackLabel">Precio Lote Completo</small>
+                                        <strong class="pack" id="selPackPrice">$0</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label>¿Cómo se va a vender?</label>
+                                <select id="sellMeasureSelect" onchange="recalcCurrentLine(false)">
+                                    <option value="base">Por Unidad</option>
+                                </select>
+                            </div>
+
+                            <div class="form-2col">
+                                <div class="field">
+                                    <label>¿Cuántas unidades/lotes lleva?</label>
+                                    <input type="number" id="sellQtyInput" placeholder="Cant." min="0.1" step="any" oninput="recalcCurrentLine(false)">
+                                </div>
+                                <div class="field">
+                                    <label>Precio Aplicado ($)</label>
+                                    <input type="number" id="sellPriceInput" placeholder="0" min="0" step="any" oninput="recalcCurrentLine(true)">
+                                </div>
+                            </div>
+
+                            <div class="line-subtotal-box">
+                                <div>
+                                    <span style="font-size: 0.74rem; color: var(--text-muted); display: block;" id="lineDeductInfo">Descuenta 0 del stock</span>
+                                    <strong style="font-size: 1.4rem; font-weight: 900; color: var(--accent-hover);" id="lineSubtotalDisplay">$0</strong>
+                                </div>
+                                <button class="btn btn-accent" style="padding: 0.72rem 1.05rem; font-size: 0.84rem;" onclick="addItemToCart()">
+                                    ➕ Sumar a la Cuenta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna 3: Venta Abierta -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🛒 3. Venta Abierta (En Curso)</div>
+                            <button class="btn-danger-sm" onclick="clearCart()">🗑️ Borrar</button>
+                        </div>
+                        <div style="padding: 0.5rem 0.8rem 0 0.8rem; background: #f8fafc; border-bottom: 1px solid var(--border-light);">
+                            <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.2rem;">CLIENTE ATENDIDO</div>
+                            <input type="text" id="posClientNameInput" placeholder="Nombre del cliente..." style="width: 100%; padding: 0.38rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; font-weight: 600;" oninput="syncPosClientToInvoice()">
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Medida</th>
+                                            <th>Cant.</th>
+                                            <th>Subtotal</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cartTableBody"></tbody>
+                                </table>
+                            </div>
+
+                            <div class="ticket-bottom">
+                                <div class="total-banner">
+                                    <span>TOTAL A PAGAR:</span>
+                                    <strong id="cartGrandTotal">$0</strong>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem;">
+                                    <button class="btn btn-success" style="justify-content: center; padding: 0.62rem; font-size: 0.78rem;" onclick="maintainSale()">
+                                        📌 Mantener Venta
+                                    </button>
+                                    <button class="btn btn-accent" style="justify-content: center; padding: 0.62rem; font-size: 0.78rem;" onclick="closeAndInvoiceSale()">
+                                        🧾 Cerrar Venta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-nav-bar">
+                    <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">
+                        Sección 1 de 4 — Mostrador de Ventas (Descuenta primero lote antiguo)
+                    </span>
+                    <button class="btn btn-accent" onclick="goToSlide(1)">
+                        Siguiente: Registrar Productos e Inventario ➔
+                    </button>
+                </div>
+            </section>
+
+            <!-- =========================================================
+                 PANTALLA 2: REGISTRAR PRODUCTOS + EDITAR/BORRAR AL TOCAR + HISTORIAL
+                 ========================================================= -->
+            <section class="screen-slide">
+                <div class="manage-grid">
+                    <!-- Formulario de Registro / Edición de Producto -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title" id="regFormTitle">➕ Registrar Producto y Calcular Venta</div>
+                            <button class="btn-danger-sm" onclick="resetRegForm()">Limpiar / Cancelar</button>
+                        </div>
+                        <div class="panel-body" style="overflow-y: auto;">
+                            <form id="registerProductForm" onsubmit="handleSaveProduct(event)">
+                                <input type="hidden" id="editingProductId" value="">
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Nombre del Producto *</label>
+                                        <input type="text" id="regName" placeholder="Ej: Cemento Gris, Cal..." required>
+                                    </div>
+                                    <div class="field">
+                                        <label>¿Qué trae el lote? (Presentación) *</label>
+                                        <select id="regBaseUnit" onchange="calcRegistrationPreview()">
+                                            <option value="Bulto">Bulto</option>
+                                            <option value="Unidad">Unidad</option>
+                                            <option value="Caja">Caja</option>
+                                            <option value="Paquete">Paquete</option>
+                                            <option value="Kilo">Kilo</option>
+                                            <option value="Libra">Libra</option>
+                                            <option value="Metro">Metro</option>
+                                            <option value="Litro">Litro</option>
+                                            <option value="Rollo">Rollo</option>
+                                            <option value="Galón">Galón / Cuñete</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>¿Cuántos Lotes compraste? *</label>
+                                        <input type="number" id="regLotsCount" placeholder="Ej: 1, 2, 3..." min="0.1" step="any" required oninput="calcRegistrationPreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>¿Cuántos <span id="lblRegItemsInLot">Bultos</span> trae cada lote? *</label>
+                                        <input type="number" id="regUnitsPerPack" placeholder="Cant. por lote" min="0.1" step="any" required oninput="calcRegistrationPreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Costo Total Pagado ($) *</label>
+                                        <input type="number" id="regLotTotalCost" placeholder="Ej: 500000" min="0" step="any" required oninput="calcRegistrationPreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>Porcentaje de Ganancia (%) *</label>
+                                        <input type="number" id="regMarginPercent" placeholder="Ej: 20" min="0" step="any" required oninput="calcRegistrationPreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Libras que trae 1 <span id="lblSubUnitType">Bulto</span> (Ej: 100 lbs = 50 kg)</label>
+                                        <input type="number" id="regSubUnitsPerBase" placeholder="Ej: 100 libras" min="0" step="any" oninput="calcRegistrationPreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>Categoría (Opcional)</label>
+                                        <input type="text" id="regCategory" placeholder="Ej: Construcción">
+                                    </div>
+                                </div>
+
+                                <div class="sim-card-green">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <span style="font-size: 0.7rem; font-weight: 800; color: #065f46;">✨ Cálculo Automático (Dinámico)</span>
+                                        <span style="font-size: 0.7rem; font-weight: 800; color: #047857;" id="simLibraKiloPreview">Libra: $0 | Kilo: $0</span>
+                                    </div>
+                                    <div class="sim-4grid">
+                                        <div class="sim-cell">
+                                            <span>Costo <span id="lblSimUnitCost">Bulto</span></span>
+                                            <strong id="simBaseCost">$0</strong>
+                                        </div>
+                                        <div class="sim-cell">
+                                            <span>Stock Total</span>
+                                            <strong id="simTotalUnits">0</strong>
+                                        </div>
+                                        <div class="sim-cell">
+                                            <span>Venta <span id="lblSimUnitSell">Bulto</span></span>
+                                            <strong id="simBaseSell" style="color: var(--accent-hover);">$0</strong>
+                                        </div>
+                                        <div class="sim-cell">
+                                            <span>Venta Lote</span>
+                                            <strong id="simPackSell">$0</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Precio Final <span id="lblRegBaseSell">Bulto</span> ($) *</label>
+                                        <input type="number" id="regFinalBasePrice" placeholder="0" step="any" required oninput="recalcDynamicLibraKiloFromFinal()">
+                                    </div>
+                                    <div class="field">
+                                        <label>Precio Final Lote Completo ($) *</label>
+                                        <input type="number" id="regFinalPackPrice" placeholder="0" step="any" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit" id="btnSaveProductSubmit" class="btn btn-accent" style="width: 100%; justify-content: center; padding: 0.62rem; font-size: 0.85rem; margin-top: 0.15rem;">
+                                    💾 Guardar Producto en el Computador
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Inventario con Selección al Tocar (Editar / Borrar Individual) + Borrar General -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📋 Inventario Registrado (Toca un producto para Editar o Borrar)</div>
+                            <button class="btn-danger-sm" onclick="clearAllInventory()">🗑️ Borrar General</button>
+                        </div>
+                        <div class="panel-body">
+                            <!-- Barra contextual que aparece al tocar un producto de la lista -->
+                            <div class="contextual-action-bar" id="prodContextualBar">
+                                <span style="font-size: 0.78rem; font-weight: 800; color: #9a3412;">
+                                    Seleccionado: <span id="ctxProdName">--</span>
+                                </span>
+                                <div style="display: flex; gap: 0.45rem;">
+                                    <button class="btn-edit-sm" onclick="editSelectedInventoryProduct()">✏️ Editar Producto</button>
+                                    <button class="btn-danger-sm" onclick="deleteSelectedInventoryProduct()">🗑️ Borrar Este Producto</button>
+                                    <button class="btn" style="background: #e2e8f0; color: #334155; padding: 0.25rem 0.5rem;" onclick="deselectInventoryRow()">✕</button>
+                                </div>
+                            </div>
+
+                            <div class="table-scroll" style="flex: 1.25; margin-bottom: 0.65rem;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Empaque</th>
+                                            <th>P. Base</th>
+                                            <th>P. Lote</th>
+                                            <th>Stock Actual</th>
+                                            <th>Bodega Reserva</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="inventoryTableBody"></tbody>
+                                </table>
+                            </div>
+
+                            <!-- Historial de Facturas con Selección al Tocar (Editar / Borrar Individual) + Borrar General -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <span style="font-size: 0.74rem; font-weight: 800; color: var(--primary);">FACTURAS GUARDADAS (Toca una factura para Editar o Borrar)</span>
+                                <button class="btn-danger-sm" onclick="clearAllSalesHistory()">🗑️ Borrar General Facturas</button>
+                            </div>
+
+                            <div class="contextual-action-bar" id="saleContextualBar">
+                                <span style="font-size: 0.76rem; font-weight: 800; color: #9a3412;">
+                                    Factura: <span id="ctxSaleNum">--</span>
+                                </span>
+                                <div style="display: flex; gap: 0.4rem;">
+                                    <button class="btn-edit-sm" onclick="editSelectedSaleInvoice()">✏️ Abrir / Editar Factura</button>
+                                    <button class="btn-danger-sm" onclick="deleteSelectedSaleInvoice()">🗑️ Borrar Esta Factura</button>
+                                    <button class="btn" style="background: #e2e8f0; color: #334155; padding: 0.25rem 0.5rem;" onclick="deselectSaleRow()">✕</button>
+                                </div>
+                            </div>
+
+                            <div class="table-scroll" style="flex: 0.85;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Factura #</th>
+                                            <th>Fecha</th>
+                                            <th>Cliente</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="salesHistoryTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-nav-bar">
+                    <button class="btn btn-outline-light" style="background: #334155;" onclick="goToSlide(0)">
+                        ⬅ Anterior: Buscador y Venta
+                    </button>
+                    <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">
+                        Sección 2 de 4 — Registro, Edición y Borrado
+                    </span>
+                    <button class="btn btn-accent" onclick="goToSlide(2)">
+                        Siguiente: Hacer Factura ➔
+                    </button>
+                </div>
+            </section>
+
+            <!-- =========================================================
+                 PANTALLA 3: HACER FACTURA EDITABLE E IMPRIMIR
+                 ========================================================= -->
+            <section class="screen-slide">
+                <div class="invoice-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">⚙️ Datos y Control de Factura</div>
+                            <div style="display: flex; gap: 0.35rem;">
+                                <button class="btn-edit-sm" onclick="saveEditedInvoiceChanges()" title="Guardar cambios editados en la factura">💾 Guardar Cambios</button>
+                                <button class="btn-danger-sm" onclick="clearCurrentInvoice()">🗑️ Borrar</button>
+                                <button class="btn btn-success" style="padding: 0.3rem 0.55rem; font-size: 0.74rem;" onclick="window.print()">🖨️ Imprimir</button>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="overflow-y: auto;">
+                            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem; margin-bottom: 0.65rem;">
+                                <div style="font-size: 0.74rem; font-weight: 800; color: var(--primary); margin-bottom: 0.45rem;">
+                                    🏪 Datos de tu Ferretería (Se guardan automáticamente)
+                                </div>
+
+                                <div class="field">
+                                    <label>Nombre de la Tienda / Ferretería *</label>
+                                    <input type="text" id="cfgStoreName" placeholder="Ej: Ferretería El Constructor" oninput="saveStoreConfig()">
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>NIT / Registro Tributario</label>
+                                        <input type="text" id="cfgStoreNit" placeholder="Ej: 900.123.456-7" oninput="saveStoreConfig()">
+                                    </div>
+                                    <div class="field">
+                                        <label>Teléfono / Dirección</label>
+                                        <input type="text" id="cfgStoreInfo" placeholder="Ej: Tel: 300 000 0000" oninput="saveStoreConfig()">
+                                    </div>
+                                </div>
+
+                                <div class="field" style="margin-bottom: 0;">
+                                    <label>Logotipo de tu Negocio</label>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="file" id="cfgLogoFile" accept="image/*" onchange="uploadStoreLogo(event)" style="font-size: 0.74rem; padding: 0.32rem;">
+                                        <button type="button" class="btn-danger-sm" onclick="removeStoreLogo()">Quitar Logo</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--accent-soft); border: 1px solid #fed7aa; border-radius: 8px; padding: 0.65rem;">
+                                <div style="font-size: 0.74rem; font-weight: 800; color: var(--accent-hover); margin-bottom: 0.45rem;">
+                                    👤 Datos del Cliente para esta Factura
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Nombre del Cliente</label>
+                                        <input type="text" id="invClientName" placeholder="Nombre del cliente..." oninput="syncInvoicePreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>NIT / Cédula del Cliente</label>
+                                        <input type="text" id="invClientNit" placeholder="Ej: 1.098.765.432" oninput="syncInvoicePreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col" style="margin-bottom: 0;">
+                                    <div class="field" style="margin-bottom: 0;">
+                                        <label>Fecha de Compra</label>
+                                        <input type="date" id="invDateInput" oninput="syncInvoicePreview()">
+                                    </div>
+                                    <div class="field" style="margin-bottom: 0;">
+                                        <label>Número de Factura</label>
+                                        <input type="text" id="invNumberInput" value="FAC-0001" oninput="syncInvoicePreview()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📄 Vista Previa de Factura (Puedes editar cantidades o borrar filas)</div>
+                            <button class="btn btn-success" onclick="window.print()">🖨️ Imprimir Ahora</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="invoice-preview-wrapper">
+                                <div class="invoice-sheet" id="printableInvoiceSheet">
+                                    <div>
+                                        <div class="inv-header">
+                                            <div class="inv-store-brand">
+                                                <img id="previewStoreLogo" class="inv-logo-img" src="" alt="Logo Negocio" style="display: none;">
+                                                <div class="inv-store-details">
+                                                    <h2 id="previewStoreName">NOMBRE DE TU FERRETERÍA</h2>
+                                                    <p id="previewStoreNit">NIT / Registro Tributario: --</p>
+                                                    <p id="previewStoreInfo">Dirección y Teléfono del Negocio</p>
+                                                </div>
+                                            </div>
+                                            <div class="inv-meta-box">
+                                                <div style="font-weight: 800; color: #64748b; font-size: 0.72rem;">FACTURA DE VENTA</div>
+                                                <div class="inv-num" id="previewInvNumber">FAC-0001</div>
+                                                <div style="margin-top: 4px; color: #334155;">Fecha: <strong id="previewInvDate">--</strong></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="inv-client-box">
+                                            <div>
+                                                <span style="color: #64748b; font-size: 0.72rem; display: block;">CLIENTE:</span>
+                                                <strong id="previewClientName">Cliente General</strong>
+                                            </div>
+                                            <div>
+                                                <span style="color: #64748b; font-size: 0.72rem; display: block;">NIT / CÉDULA:</span>
+                                                <strong id="previewClientNit">N/A</strong>
+                                            </div>
+                                        </div>
+
+                                        <table class="inv-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Descripción del Producto</th>
+                                                    <th>Medida</th>
+                                                    <th>Cant.</th>
+                                                    <th>V. Unitario</th>
+                                                    <th style="text-align: right;">Subtotal</th>
+                                                    <th style="width: 30px;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="previewInvoiceItems"></tbody>
+                                        </table>
+
+                                        <div style="margin-top: 1rem; border-top: 1px dashed #cbd5e1; padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                                <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Efectivo Recibido ($):</label>
+                                                <input type="number" id="cashReceivedInput" placeholder="Ej: 50000" style="width: 130px; padding: 0.35rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 5px; font-weight: 700; font-size: 0.85rem;" oninput="calcChange()">
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 0.72rem; color: #64748b; display: block; font-weight: 700;">SU CAMBIO / VUELTO:</span>
+                                                <strong style="font-size: 1.1rem; color: #059669; font-weight: 900;" id="changeOutput">$0</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="inv-totals">
+                                            <div class="inv-total-card">
+                                                <span style="font-weight: 800; font-size: 0.85rem;">TOTAL A PAGAR:</span>
+                                                <strong style="font-size: 1.3rem; font-weight: 900; color: #0f172a;" id="previewInvTotal">$0</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="inv-software-watermark">
+                                        <span>Gracias por su compra.</span>
+                                        <span style="font-weight: 700; color: #475569;">Software: Ferro Farit Gale Pro</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-nav-bar">
+                    <button class="btn btn-outline-light" style="background: #334155;" onclick="goToSlide(1)">
+                        ⬅ Anterior: Registrar Productos e Inventario
+                    </button>
+                    <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">
+                        Sección 3 de 4 — Facturación e Impresión
+                    </span>
+                    <button class="btn btn-accent" onclick="goToSlide(3)">
+                        Siguiente: Bodega y Compras Nuevas (FIFO) ➔
+                    </button>
+                </div>
+            </section>
+
+            <!-- =========================================================
+                 PANTALLA 4: BODEGA Y NUEVOS PEDIDOS EN ESPERA (FIFO INTELIGENTE)
+                 ========================================================= -->
+            <section class="screen-slide">
+                <div class="warehouse-grid">
+                    <!-- Panel Izquierdo: Registrar Nuevo Pedido / Lote en Bodega -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🏭 Registrar Compra Nueva en Bodega</div>
+                        </div>
+                        <div class="panel-body" style="overflow-y: auto;">
+                            <div style="background: var(--info-soft); border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.65rem; margin-bottom: 0.7rem; font-size: 0.75rem; color: #1e3a8a; line-height: 1.38;">
+                                <strong>💡 Lógica Inteligente FIFO:</strong><br>
+                                • Mientras quede inventario viejo en mostrador, el sistema seguirá vendiendo y descontando lo viejo.<br>
+                                • Cuando se acabe lo viejo: si el nuevo pedido tiene el <strong>mismo precio</strong>, pasa automáticamente al mostrador. Si el <strong>precio subió o cambió</strong>, el sistema te avisará para activar la nueva tarifa sin equivocarse.
+                            </div>
+
+                            <form id="warehouseBatchForm" onsubmit="handleAddWarehouseBatch(event)">
+                                <div class="field">
+                                    <label>Seleccionar Producto Existente *</label>
+                                    <select id="whProductSelect" required onchange="onWarehouseProductChange()">
+                                        <option value="">-- Elige un producto registrado --</option>
+                                    </select>
+                                </div>
+
+                                <div id="whCurrentPriceBanner" style="display:none; background: #f8fafc; border: 1px solid var(--border); border-radius: 7px; padding: 0.55rem 0.7rem; margin-bottom: 0.65rem; font-size: 0.76rem;">
+                                    Precio actual en venta: <strong id="whCurrBasePrice" style="color: var(--accent-hover);">$0</strong> por unidad | <strong id="whCurrPackPrice" style="color: var(--success);">$0</strong> por lote.
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Cantidad de Lotes Nuevos *</label>
+                                        <input type="number" id="whLotsCount" placeholder="Ej: 2" min="0.1" step="any" required oninput="calcWarehousePreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>Unidades por Lote *</label>
+                                        <input type="number" id="whUnitsPerPack" placeholder="Ej: 25" min="0.1" step="any" required oninput="calcWarehousePreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Costo Total Nuevo Pedido ($)</label>
+                                        <input type="number" id="whLotCost" placeholder="Opcional" min="0" step="any" oninput="calcWarehousePreview()">
+                                    </div>
+                                    <div class="field">
+                                        <label>% Ganancia Sugerida</label>
+                                        <input type="number" id="whMarginPct" placeholder="Ej: 20" min="0" step="any" oninput="calcWarehousePreview()">
+                                    </div>
+                                </div>
+
+                                <div class="form-2col">
+                                    <div class="field">
+                                        <label>Nuevo Precio Venta Unidad ($) *</label>
+                                        <input type="number" id="whNewBasePrice" placeholder="0" min="0" step="any" required>
+                                    </div>
+                                    <div class="field">
+                                        <label>Nuevo Precio Venta Lote ($) *</label>
+                                        <input type="number" id="whNewPackPrice" placeholder="0" min="0" step="any" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-info" style="width: 100%; justify-content: center; padding: 0.72rem; font-size: 0.85rem;">
+                                    📥 Guardar Pedido en Bodega (En Espera)
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Panel Derecho: Estado de Bodega, Lotes en Reserva y Alertas de Cambio de Precio -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📦 Control de Bodega y Lotes en Reserva</div>
+                            <button class="btn-danger-sm" onclick="clearAllWarehouseBatches()">🗑️ Borrar Reserva</button>
+                        </div>
+                        <div class="panel-body">
+                            <!-- Alerta cuando un producto agotó su lote viejo y tiene un lote nuevo con distinto precio esperando -->
+                            <div class="alert-fifo-box" id="fifoPriceAlertBox">
+                                <div style="font-size: 0.76rem; color: #991b1b;">
+                                    <strong>⚠️ Lote viejo agotado con cambio de precio:</strong> <span id="fifoAlertText"></span>
+                                </div>
+                                <button class="btn btn-accent" style="padding: 0.4rem 0.75rem; font-size: 0.74rem;" onclick="activateNextPriceBatch()">
+                                    ✅ Activar Nuevo Precio y Pasar a Venta
+                                </button>
+                            </div>
+
+                            <div class="table-scroll" style="flex: 1;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad en Reserva</th>
+                                            <th>Nuevo Precio Unidad</th>
+                                            <th>Nuevo Precio Lote</th>
+                                            <th>Estado / Acción</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="warehouseTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-nav-bar">
+                    <button class="btn btn-outline-light" style="background: #334155;" onclick="goToSlide(2)">
+                        ⬅ Anterior: Hacer Factura
+                    </button>
+                    <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600;">
+                        Sección 4 de 4 — Bodega y Control FIFO de Precios
+                    </span>
+                    <button class="btn btn-accent" onclick="goToSlide(0)">
+                        Volver al Inicio: Buscador y Venta ↺
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // =========================================================================
+        // ALMACENAMIENTO LOCAL EN EL COMPUTADOR (PERSISTENTE)
+        // =========================================================================
+        let products = JSON.parse(localStorage.getItem('ffg_pro_products')) || [];
+        let salesHistory = JSON.parse(localStorage.getItem('ffg_pro_sales')) || [];
+        let warehouseBatches = JSON.parse(localStorage.getItem('ffg_pro_warehouse')) || [];
+        let storeConfig = JSON.parse(localStorage.getItem('ffg_pro_store')) || {
+            name: "",
+            nit: "",
+            info: "",
+            logoDataUrl: ""
+        };
+
+        let currentCart = [];
+        let selectedProduct = null;
+        let activeInvoiceItems = [];
+        let editingSaleId = null;
+        let selectedInventoryRowId = null;
+        let selectedSaleRowId = null;
+        let currentSlideIndex = 0;
+
+        function formatMoney(v) {
+            return '$' + Math.round(v).toLocaleString('es-CO');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        }
+
+        function saveAllToComputer() {
+            localStorage.setItem('ffg_pro_products', JSON.stringify(products));
+            localStorage.setItem('ffg_pro_sales', JSON.stringify(salesHistory));
+            localStorage.setItem('ffg_pro_warehouse', JSON.stringify(warehouseBatches));
+            localStorage.setItem('ffg_pro_store', JSON.stringify(storeConfig));
+            updateGlobalCounters();
+        }
+
+        function updateGlobalCounters() {
+            document.getElementById('topProdCount').textContent = products.length;
+            document.getElementById('topReserveCount').textContent = warehouseBatches.length;
+            const totalSold = salesHistory.reduce((sum, s) => sum + s.total, 0);
+            document.getElementById('headerTotalSold').textContent = formatMoney(totalSold);
+        }
+
+        // =========================================================================
+        // NAVEGACIÓN HORIZONTAL ENTRE LAS 4 PANTALLAS
+        // =========================================================================
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            const track = document.getElementById('horizontalTrack');
+            track.style.transform = `translateX(-${index * 25}%)`;
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`navBtn${i}`);
+                if (i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+
+            if (index === 0) {
+                renderSearchResults(document.getElementById('searchInput').value);
+            } else if (index === 1) {
+                calcRegistrationPreview();
+                renderInventoryTable();
+                renderSalesHistoryTable();
+            } else if (index === 2) {
+                syncInvoicePreview();
+            } else if (index === 3) {
+                populateWarehouseProductDropdown();
+                renderWarehouseTable();
+            }
+        }
+
+        // =========================================================================
+        // SECCIÓN 1: BUSCADOR, SELECCIÓN Y VENTA CON LÓGICA FIFO AUTOMÁTICA
+        // =========================================================================
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => renderSearchResults(searchInput.value));
+
+        function clearSearch() {
+            searchInput.value = '';
+            renderSearchResults('');
+            searchInput.focus();
+        }
+
+        function getReserveUnitsForProduct(productId) {
+            return warehouseBatches
+                .filter(b => b.productId === productId)
+                .reduce((sum, b) => sum + b.totalBaseUnits, 0);
+        }
+
+        function renderSearchResults(query = '') {
+            const list = document.getElementById('searchResultsList');
+            const q = query.trim().toLowerCase();
+
+            if (products.length === 0) {
+                list.innerHTML = `
+                    <div style="padding: 2rem 1rem; text-align: center; color: var(--text-muted);">
+                        <p style="font-size: 0.85rem; margin-bottom: 0.75rem;">Aún no hay productos registrados en este computador.</p>
+                        <button class="btn btn-accent" onclick="goToSlide(1)">➕ Ir a Registrar Productos</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const filtered = products.filter(p =>
+                p.name.toLowerCase().includes(q) ||
+                (p.category && p.category.toLowerCase().includes(q))
+            );
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">No se encontró "${query}".</div>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(p => {
+                const isSel = selectedProduct && selectedProduct.id === p.id;
+                const packs = (p.stockBase / p.unitsPerPack).toFixed(1);
+                const reserve = getReserveUnitsForProduct(p.id);
+                const pendingPriceBatch = warehouseBatches.find(b => b.productId === p.id && p.stockBase === 0);
+
+                return `
+                    <div class="res-item ${isSel ? 'selected' : ''}" onclick="selectProductForSale(${p.id})" style="position:relative;">
+                        <div style="flex:1;">
+                            <div class="res-name">${p.name} ${pendingPriceBatch ? '<span style="background:#fef3c7;color:#92400e;font-size:0.65rem;padding:2px 5px;border-radius:4px;">⚠️ Nuevo precio en bodega</span>' : ''}</div>
+                            <div class="res-meta">
+                                Mostrador: <strong>${p.stockBase} ${p.baseUnit}(s)</strong> (${packs} Lotes)
+                                ${reserve > 0 ? ` | <span style="color:var(--info);font-weight:700;">Bodega: +${reserve}</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="text-align: right; display:flex; align-items:center; gap:0.5rem;">
+                            <div>
+                                <div style="font-weight: 800; color: var(--success); font-size: 0.88rem;">${formatMoney(p.basePrice)} / ${p.baseUnit}</div>
+                                ${p.unitsPerPack > 1 ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${formatMoney(p.packPrice)} / Lote</div>` : ''}
+                            </div>
+                            <button class="btn" style="background:#e2e8f0; color:#0f172a; padding:0.25rem 0.45rem; font-size:0.75rem; border-radius:5px;" onclick="event.stopPropagation(); openSearchActionMenu(${p.id})" title="Opciones (Editar / Borrar)">⋮</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        let _lpSearchProductId = null;
+
+        function openSearchActionMenu(id) {
+            _lpSearchProductId = id;
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+            selectProductForSale(id);
+            document.getElementById('lpSearchProdName').textContent = prod.name;
+            document.getElementById('searchLongPressBar').classList.add('visible');
+        }
+
+        function cancelLongPress() {}
+
+        function closeSearchLongPressBar() {
+            _lpSearchProductId = null;
+            document.getElementById('searchLongPressBar').classList.remove('visible');
+        }
+
+        function editFromLongPress() {
+            if (!_lpSearchProductId) return;
+            const idToEdit = _lpSearchProductId;
+            closeSearchLongPressBar();
+            goToSlide(1);
+            selectInventoryRow(idToEdit);
+            editSelectedInventoryProduct();
+        }
+
+        function deleteFromLongPress() {
+            if (!_lpSearchProductId) return;
+            const idToDel = _lpSearchProductId;
+            const prod = products.find(p => p.id === idToDel);
+            if (!prod) return;
+            if (confirm(`¿Borrar "${prod.name}" del inventario?`)) {
+                products = products.filter(p => p.id !== idToDel);
+                warehouseBatches = warehouseBatches.filter(b => b.productId !== idToDel);
+                if (selectedProduct && selectedProduct.id === idToDel) selectedProduct = null;
+                closeSearchLongPressBar();
+                saveAllToComputer();
+                renderSearchResults(searchInput.value);
+                renderInventoryTable();
+                showToast('🗑️ Producto eliminado');
+            }
+        }
+
+        function selectProductForSale(id) {
+            selectedProduct = products.find(p => p.id === id);
+            if (!selectedProduct) return;
+
+            const packs = (selectedProduct.stockBase / selectedProduct.unitsPerPack).toFixed(1);
+            const reserve = getReserveUnitsForProduct(selectedProduct.id);
+            document.getElementById('selProdName').textContent = selectedProduct.name;
+            document.getElementById('selProdStock').textContent = `Mostrador: ${selectedProduct.stockBase} ${selectedProduct.baseUnit}(s) (${packs} Lotes)` + (reserve > 0 ? ` | Bodega en espera: ${reserve}` : '');
+            document.getElementById('selBaseLabel').textContent = `Precio ${selectedProduct.baseUnit}`;
+            document.getElementById('selBasePrice').textContent = formatMoney(selectedProduct.basePrice);
+            document.getElementById('selPackLabel').textContent = `Precio Lote (${selectedProduct.unitsPerPack})`;
+            document.getElementById('selPackPrice').textContent = formatMoney(selectedProduct.packPrice);
+
+            const select = document.getElementById('sellMeasureSelect');
+            const librasPorBase = selectedProduct.subUnitsPerBase || 0;
+            const precioLibra = librasPorBase > 0 ? Math.round(selectedProduct.basePrice / librasPorBase) : (selectedProduct.baseUnit === 'Kilo' ? Math.round(selectedProduct.basePrice / 2) : (selectedProduct.baseUnit === 'Libra' ? selectedProduct.basePrice : 0));
+            const precioKilo = librasPorBase > 0 ? Math.round((selectedProduct.basePrice / librasPorBase) * 2) : (selectedProduct.baseUnit === 'Kilo' ? selectedProduct.basePrice : (selectedProduct.baseUnit === 'Libra' ? Math.round(selectedProduct.basePrice * 2) : 0));
+
+            let opts = `<option value="base">${selectedProduct.baseUnit} (${formatMoney(selectedProduct.basePrice)})</option>`;
+            if (selectedProduct.unitsPerPack > 1) {
+                opts += `<option value="pack">Lote x${selectedProduct.unitsPerPack} (${formatMoney(selectedProduct.packPrice)})</option>`;
+            }
+            if (precioLibra > 0 && selectedProduct.baseUnit !== 'Libra') {
+                opts += `<option value="libra">Libra (${formatMoney(precioLibra)})</option>`;
+            }
+            if (precioKilo > 0 && selectedProduct.baseUnit !== 'Kilo') {
+                opts += `<option value="kilo">Kilo (${formatMoney(precioKilo)})</option>`;
+            }
+
+            const allUnits = ['Bulto', 'Unidad', 'Caja', 'Paquete', 'Kilo', 'Libra', 'Metro', 'Litro', 'Rollo', 'Galón / Cuñete'];
+            allUnits.forEach(u => {
+                const alreadyAdded = (u === selectedProduct.baseUnit) || (u === 'Libra' && precioLibra > 0) || (u === 'Kilo' && precioKilo > 0);
+                if (!alreadyAdded) {
+                    opts += `<option value="unit_${u}">${u}</option>`;
+                }
+            });
+
+            select.innerHTML = opts;
+
+            document.getElementById('sellQtyInput').value = '';
+            recalcCurrentLine(false);
+            renderSearchResults(searchInput.value);
+        }
+
+        function syncPosClientToInvoice() {
+            const val = document.getElementById('posClientNameInput').value;
+            document.getElementById('invClientName').value = val;
+            syncInvoicePreview();
+        }
+
+        function getSellModeInfo(prod, mode) {
+            const librasPorBase = prod.subUnitsPerBase || 0;
+            if (mode === 'pack') return { mult: prod.unitsPerPack, price: prod.packPrice, label: 'Lote' };
+            if (mode === 'libra') {
+                if (librasPorBase > 0) {
+                    return { mult: Number((1 / librasPorBase).toFixed(6)), price: Math.round(prod.basePrice / librasPorBase), label: 'Libra' };
+                }
+                if (prod.baseUnit === 'Kilo') return { mult: 0.5, price: Math.round(prod.basePrice / 2), label: 'Libra' };
+                return { mult: 1, price: prod.basePrice, label: 'Libra' };
+            }
+            if (mode === 'kilo') {
+                if (librasPorBase > 0) {
+                    return { mult: Number((2 / librasPorBase).toFixed(6)), price: Math.round((prod.basePrice / librasPorBase) * 2), label: 'Kilo' };
+                }
+                if (prod.baseUnit === 'Libra') return { mult: 2, price: Math.round(prod.basePrice * 2), label: 'Kilo' };
+                return { mult: 1, price: prod.basePrice, label: 'Kilo' };
+            }
+            if (mode.startsWith('unit_')) {
+                const unitLabel = mode.replace('unit_', '');
+                return { mult: 1, price: prod.basePrice, label: unitLabel };
+            }
+            return { mult: 1, price: prod.basePrice, label: prod.baseUnit };
+        }
+
+        function recalcCurrentLine(manualPrice) {
+            if (!selectedProduct) return;
+            const mode = document.getElementById('sellMeasureSelect').value;
+            const qty = parseFloat(document.getElementById('sellQtyInput').value) || 0;
+            const priceInput = document.getElementById('sellPriceInput');
+            const info = getSellModeInfo(selectedProduct, mode);
+
+            if (!manualPrice) {
+                priceInput.value = info.price;
+            }
+
+            const appliedPrice = parseFloat(priceInput.value) || 0;
+            const subtotal = qty * appliedPrice;
+            const stockDeduct = qty * info.mult;
+
+            document.getElementById('lineDeductInfo').textContent = `Descuenta ${stockDeduct} ${selectedProduct.baseUnit}(s) del lote activo`;
+            document.getElementById('lineSubtotalDisplay').textContent = formatMoney(subtotal);
+        }
+
+        function addItemToCart() {
+            if (!selectedProduct) return showToast('⚠️ Primero busca y selecciona un producto');
+            const mode = document.getElementById('sellMeasureSelect').value;
+            const qty = parseFloat(document.getElementById('sellQtyInput').value) || 0;
+            const appliedPrice = parseFloat(document.getElementById('sellPriceInput').value) || 0;
+
+            if (qty <= 0) return showToast('⚠️ La cantidad debe ser mayor a 0');
+
+            const info = getSellModeInfo(selectedProduct, mode);
+            const stockDeduct = qty * info.mult;
+
+            const inCart = currentCart
+                .filter(i => i.productId === selectedProduct.id)
+                .reduce((s, i) => s + i.stockDeduct, 0);
+
+            // Verificar si hay un lote en reserva con el MISMO precio que podría sumarse automáticamente si se acaba el viejo
+            const samePriceReserve = warehouseBatches
+                .filter(b => b.productId === selectedProduct.id && b.newBasePrice === selectedProduct.basePrice && b.newPackPrice === selectedProduct.packPrice)
+                .reduce((s, b) => s + b.totalBaseUnits, 0);
+
+            const maxAvailableAtCurrentPrice = selectedProduct.stockBase + samePriceReserve;
+
+            if (stockDeduct + inCart > maxAvailableAtCurrentPrice) {
+                const diffPriceReserve = warehouseBatches.find(b => b.productId === selectedProduct.id);
+                if (diffPriceReserve) {
+                    return showToast(`⚠️ Solo quedan ${selectedProduct.stockBase - inCart} al precio viejo. El siguiente lote en bodega tiene otro precio.`);
+                }
+                return showToast(`⚠️ Stock insuficiente. Quedan ${maxAvailableAtCurrentPrice - inCart} ${selectedProduct.baseUnit}(s)`);
+            }
+
+            currentCart.push({
+                productId: selectedProduct.id,
+                name: selectedProduct.name,
+                measureLabel: info.label,
+                qty,
+                unitPrice: appliedPrice,
+                stockDeduct,
+                subtotal: qty * appliedPrice
+            });
+
+            renderCartTable();
+            syncInvoicePreview();
+            showToast('✅ Sumado a la venta abierta');
+        }
+
+        function removeCartItem(idx) {
+            currentCart.splice(idx, 1);
+            renderCartTable();
+            syncInvoicePreview();
+        }
+
+        function clearCart() {
+            currentCart = [];
+            renderCartTable();
+            syncInvoicePreview();
+        }
+
+        function renderCartTable() {
+            const tbody = document.getElementById('cartTableBody');
+            if (currentCart.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.75rem;">La cuenta está vacía. Selecciona productos y súmalos aquí.</td></tr>`;
+                document.getElementById('cartGrandTotal').textContent = '$0';
+                return;
+            }
+
+            let total = 0;
+            tbody.innerHTML = currentCart.map((item, idx) => {
+                total += item.subtotal;
+                return `
+                    <tr>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.measureLabel}</td>
+                        <td>${item.qty}</td>
+                        <td><strong>${formatMoney(item.subtotal)}</strong></td>
+                        <td><button class="btn-danger-sm" style="padding: 0.15rem 0.4rem;" onclick="removeCartItem(${idx})">✕</button></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('cartGrandTotal').textContent = formatMoney(total);
+        }
+
+        // PROCESAMIENTO FIFO INTELIGENTE AL CERRAR VENTA
+        function processFifoAfterDeduction(prod) {
+            // Si el lote activo llega a 0, revisar la cola en bodega (Sección 4)
+            while (prod.stockBase <= 0) {
+                const nextBatchIdx = warehouseBatches.findIndex(b => b.productId === prod.id);
+                if (nextBatchIdx === -1) {
+                    prod.stockBase = 0;
+                    break;
+                }
+                const nextBatch = warehouseBatches[nextBatchIdx];
+                // ¿Mantiene exactamente el mismo precio?
+                if (nextBatch.newBasePrice === prod.basePrice && nextBatch.newPackPrice === prod.packPrice) {
+                    // Pasa automáticamente a mostrador sin interrumpir
+                    prod.stockBase += nextBatch.totalBaseUnits;
+                    prod.unitsPerPack = nextBatch.unitsPerPack;
+                    warehouseBatches.splice(nextBatchIdx, 1);
+                    showToast(`🔄 ${prod.name}: Lote nuevo pasó automáticamente (mismo precio).`);
+                } else {
+                    // El precio subió o cambió: se detiene en 0 y avisa para activar la nueva tarifa
+                    prod.stockBase = 0;
+                    showToast(`⚠️ ${prod.name}: Se acabó el lote viejo. Activa el nuevo precio en la Sección 4.`);
+                    break;
+                }
+            }
+        }
+
+        function maintainSale() {
+            if (currentCart.length === 0) return showToast('⚠️ No hay productos en la venta actual');
+            showToast('📌 Venta mantenida en curso. Puede seguir agregando ítems.');
+        }
+
+        function closeAndInvoiceSale() {
+            if (currentCart.length === 0) return showToast('⚠️ Agregue productos antes de cerrar la venta');
+
+            let totalSale = 0;
+            const soldItems = JSON.parse(JSON.stringify(currentCart));
+
+            soldItems.forEach(item => {
+                totalSale += item.subtotal;
+                const prod = products.find(p => p.id === item.productId);
+                if (prod) {
+                    let remainingToDeduct = item.stockDeduct;
+                    while (remainingToDeduct > 0) {
+                        if (prod.stockBase >= remainingToDeduct) {
+                            prod.stockBase = Number((prod.stockBase - remainingToDeduct).toFixed(3));
+                            remainingToDeduct = 0;
+                            processFifoAfterDeduction(prod);
+                        } else {
+                            remainingToDeduct = Number((remainingToDeduct - prod.stockBase).toFixed(3));
+                            prod.stockBase = 0;
+                            const nextBatchIdx = warehouseBatches.findIndex(b => b.productId === prod.id);
+                            if (nextBatchIdx !== -1 && warehouseBatches[nextBatchIdx].newBasePrice === prod.basePrice) {
+                                prod.stockBase = warehouseBatches[nextBatchIdx].totalBaseUnits;
+                                warehouseBatches.splice(nextBatchIdx, 1);
+                            } else {
+                                remainingToDeduct = 0;
+                                processFifoAfterDeduction(prod);
+                            }
+                        }
+                    }
+                }
+            });
+
+            const nextNumber = `FAC-${String(salesHistory.length + 1).padStart(4, '0')}`;
+            const todayISO = new Date().toISOString().slice(0, 10);
+
+            const saleObj = {
+                id: Date.now(),
+                invoiceNumber: nextNumber,
+                date: todayISO,
+                clientName: document.getElementById('invClientName').value || 'Cliente General',
+                clientNit: document.getElementById('invClientNit').value || 'N/A',
+                items: soldItems,
+                total: totalSale
+            };
+
+            salesHistory.unshift(saleObj);
+            activeInvoiceItems = soldItems;
+            editingSaleId = saleObj.id;
+            document.getElementById('invNumberInput').value = nextNumber;
+            document.getElementById('invDateInput').value = todayISO;
+
+            currentCart = [];
+            document.getElementById('posClientNameInput').value = '';
+
+            saveAllToComputer();
+            renderCartTable();
+            syncInvoicePreview();
+            renderSearchResults(searchInput.value);
+            if (selectedProduct) selectProductForSale(selectedProduct.id);
+
+            showToast(`✅ Venta cerrada por ${formatMoney(totalSale)}`);
+            goToSlide(2);
+        }
+
+        // =========================================================================
+        // SECCIÓN 2: REGISTRO, EDICIÓN Y BORRADO AL TOCAR PRODUCTOS Y FACTURAS
+        // =========================================================================
+        function pluralizeEs(word) {
+            if (!word) return '';
+            if (word === 'Galón') return 'Galones';
+            if (word === 'Unidad') return 'Unidades';
+            return word + 's';
+        }
+
+        function recalcDynamicLibraKiloFromFinal() {
+            const baseUnit = document.getElementById('regBaseUnit').value;
+            const finalBase = parseFloat(document.getElementById('regFinalBasePrice').value) || 0;
+            const librasPorBase = parseFloat(document.getElementById('regSubUnitsPerBase').value) || 0;
+
+            let pLibra = 0;
+            let pKilo = 0;
+
+            if (librasPorBase > 0 && finalBase > 0) {
+                pLibra = Math.round(finalBase / librasPorBase);
+                pKilo = Math.round((finalBase / librasPorBase) * 2);
+            } else if (baseUnit === 'Kilo' && finalBase > 0) {
+                pKilo = Math.round(finalBase);
+                pLibra = Math.round(finalBase / 2);
+            } else if (baseUnit === 'Libra' && finalBase > 0) {
+                pLibra = Math.round(finalBase);
+                pKilo = Math.round(finalBase * 2);
+            }
+
+            const previewEl = document.getElementById('simLibraKiloPreview');
+            if (previewEl) {
+                previewEl.textContent = `Libra: ${formatMoney(pLibra)} | Kilo: ${formatMoney(pKilo)}`;
+            }
+        }
+
+        function calcRegistrationPreview() {
+            const baseUnit = document.getElementById('regBaseUnit').value;
+            const rawUnitsPerPack = document.getElementById('regUnitsPerPack').value;
+            const rawLotsCount = document.getElementById('regLotsCount').value;
+            const rawLotCost = document.getElementById('regLotTotalCost').value;
+            const rawMargin = document.getElementById('regMarginPercent').value;
+
+            const unitsPerPack = parseFloat(rawUnitsPerPack) || 0;
+            const lotsCount = parseFloat(rawLotsCount) || 0;
+            const lotTotalCost = parseFloat(rawLotCost) || 0;
+            const marginPct = parseFloat(rawMargin) || 0;
+
+            const pluralUnit = pluralizeEs(baseUnit);
+            document.getElementById('lblRegItemsInLot').textContent = pluralUnit;
+            if (document.getElementById('lblSubUnitType')) document.getElementById('lblSubUnitType').textContent = baseUnit;
+            document.getElementById('lblSimUnitCost').textContent = baseUnit;
+            document.getElementById('lblSimUnitSell').textContent = baseUnit;
+            document.getElementById('lblRegBaseSell').textContent = baseUnit;
+
+            const totalBaseUnits = lotsCount * unitsPerPack;
+            const baseCost = totalBaseUnits > 0 ? lotTotalCost / totalBaseUnits : 0;
+            const suggestedBaseSell = baseCost * (1 + marginPct / 100);
+            const suggestedLotSell = suggestedBaseSell * unitsPerPack;
+
+            document.getElementById('simBaseCost').textContent = totalBaseUnits > 0 ? formatMoney(baseCost) : '$0';
+            document.getElementById('simTotalUnits').textContent = totalBaseUnits > 0 ? `${totalBaseUnits} ${pluralUnit}` : '0';
+            document.getElementById('simBaseSell').textContent = totalBaseUnits > 0 ? formatMoney(suggestedBaseSell) : '$0';
+            document.getElementById('simPackSell').textContent = totalBaseUnits > 0 ? formatMoney(suggestedLotSell) : '$0';
+
+            if (rawLotCost !== '' && totalBaseUnits > 0) {
+                document.getElementById('regFinalBasePrice').value = Math.round(suggestedBaseSell);
+                document.getElementById('regFinalPackPrice').value = Math.round(suggestedLotSell);
+            }
+            recalcDynamicLibraKiloFromFinal();
+        }
+
+        function resetRegForm() {
+            document.getElementById('registerProductForm').reset();
+            document.getElementById('editingProductId').value = '';
+            document.getElementById('regFormTitle').textContent = '➕ Registrar Producto y Calcular Venta';
+            document.getElementById('btnSaveProductSubmit').textContent = '💾 Guardar Producto en el Computador';
+            document.getElementById('regFinalBasePrice').value = '';
+            document.getElementById('regFinalPackPrice').value = '';
+            calcRegistrationPreview();
+        }
+
+        function handleSaveProduct(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editingProductId').value;
+            const name = document.getElementById('regName').value.trim();
+            const category = document.getElementById('regCategory').value.trim() || 'General';
+            const baseUnit = document.getElementById('regBaseUnit').value;
+            const unitsPerPack = parseFloat(document.getElementById('regUnitsPerPack').value) || 1;
+            const lotsCount = parseFloat(document.getElementById('regLotsCount').value) || 1;
+            const lotTotalCost = parseFloat(document.getElementById('regLotTotalCost').value) || 0;
+            const marginPct = parseFloat(document.getElementById('regMarginPercent').value) || 0;
+
+            const stockBase = Number((lotsCount * unitsPerPack).toFixed(3));
+            const basePrice = parseFloat(document.getElementById('regFinalBasePrice').value) || 0;
+            const packPrice = parseFloat(document.getElementById('regFinalPackPrice').value) || 0;
+            const subUnitsPerBase = parseFloat(document.getElementById('regSubUnitsPerBase').value) || 0;
+            const subUnitName = 'Libra';
+
+            if (editId) {
+                const idx = products.findIndex(p => p.id === Number(editId));
+                if (idx !== -1) {
+                    products[idx] = {
+                        ...products[idx],
+                        name,
+                        category,
+                        baseUnit,
+                        unitsPerPack,
+                        lotsCount,
+                        lotTotalCost,
+                        marginPct,
+                        basePrice,
+                        packPrice,
+                        stockBase,
+                        subUnitsPerBase,
+                        subUnitName
+                    };
+                    showToast(`✏️ "${name}" actualizado correctamente`);
+                }
+            } else {
+                products.unshift({
+                    id: Date.now(),
+                    name,
+                    category,
+                    packType: 'Lote',
+                    baseUnit,
+                    unitsPerPack,
+                    lotsCount,
+                    lotTotalCost,
+                    marginPct,
+                    basePrice,
+                    packPrice,
+                    stockBase,
+                    subUnitsPerBase,
+                    subUnitName
+                });
+                showToast(`✅ "${name}" guardado en tu computador`);
+            }
+
+            saveAllToComputer();
+            renderInventoryTable();
+            renderSearchResults(searchInput.value);
+            resetRegForm();
+        }
+
+
+
+        function selectInventoryRow(id) {
+            selectedInventoryRowId = id;
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+            document.getElementById('ctxProdName').textContent = prod.name;
+            document.getElementById('prodContextualBar').classList.add('visible');
+            renderInventoryTable();
+        }
+
+        function deselectInventoryRow() {
+            selectedInventoryRowId = null;
+            document.getElementById('prodContextualBar').classList.remove('visible');
+            renderInventoryTable();
+        }
+
+        function editSelectedInventoryProduct() {
+            if (!selectedInventoryRowId) return;
+            const prod = products.find(p => p.id === selectedInventoryRowId);
+            if (!prod) return;
+
+            document.getElementById('editingProductId').value = prod.id;
+            document.getElementById('regName').value = prod.name;
+            document.getElementById('regCategory').value = prod.category || '';
+            document.getElementById('regBaseUnit').value = prod.baseUnit;
+            document.getElementById('regUnitsPerPack').value = prod.unitsPerPack;
+            document.getElementById('regLotsCount').value = Number((prod.stockBase / prod.unitsPerPack).toFixed(2));
+            document.getElementById('regLotTotalCost').value = prod.lotTotalCost || 0;
+            document.getElementById('regMarginPercent').value = prod.marginPct || 0;
+            document.getElementById('regFinalBasePrice').value = prod.basePrice;
+            document.getElementById('regFinalPackPrice').value = prod.packPrice;
+            document.getElementById('regSubUnitsPerBase').value = prod.subUnitsPerBase || '';
+            
+
+            document.getElementById('regFormTitle').textContent = `✏️ Editando: ${prod.name}`;
+            document.getElementById('btnSaveProductSubmit').textContent = '💾 Actualizar Producto';
+            calcRegistrationPreview();
+            // Restaurar los precios guardados por si tenían ajuste manual
+            document.getElementById('regFinalBasePrice').value = prod.basePrice;
+            document.getElementById('regFinalPackPrice').value = prod.packPrice;
+            document.getElementById('regSubUnitsPerBase').value = prod.subUnitsPerBase || '';
+            
+            showToast(`✏️ Editando "${prod.name}" en el formulario`);
+        }
+
+        function deleteSelectedInventoryProduct() {
+            if (!selectedInventoryRowId) return;
+            const prod = products.find(p => p.id === selectedInventoryRowId);
+            if (!prod) return;
+            if (confirm(`¿Borrar "${prod.name}" del inventario?`)) {
+                products = products.filter(p => p.id !== selectedInventoryRowId);
+                warehouseBatches = warehouseBatches.filter(b => b.productId !== selectedInventoryRowId);
+                if (selectedProduct && selectedProduct.id === selectedInventoryRowId) selectedProduct = null;
+                selectedInventoryRowId = null;
+                document.getElementById('prodContextualBar').classList.remove('visible');
+                saveAllToComputer();
+                renderInventoryTable();
+                renderSearchResults(searchInput.value);
+                showToast('🗑️ Producto eliminado');
+            }
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No hay productos registrados todavía.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => {
+                const reserve = getReserveUnitsForProduct(p.id);
+                const isSelected = selectedInventoryRowId === p.id;
+                return `
+                    <tr class="clickable-row ${isSelected ? 'selected-row' : ''}" onclick="selectInventoryRow(${p.id})">
+                        <td><strong>${p.name}</strong></td>
+                        <td>Lote (${p.unitsPerPack} ${pluralizeEs(p.baseUnit)})</td>
+                        <td style="color: var(--accent-hover); font-weight: 700;">${formatMoney(p.basePrice)}</td>
+                        <td style="color: var(--success); font-weight: 700;">${formatMoney(p.packPrice)}</td>
+                        <td><strong>${p.stockBase}</strong> ${pluralizeEs(p.baseUnit)}</td>
+                        <td style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${reserve > 0 ? `<span style="color:var(--info);font-weight:800;">+${reserve} en bodega</span>` : '<span style="color:#94a3b8;">--</span>'}</span>
+                            <button class="btn" style="background:#e2e8f0; color:#0f172a; padding:0.15rem 0.35rem; font-size:0.7rem; border-radius:4px;" onclick="event.stopPropagation(); selectInventoryRow(${p.id}); showToast('✏️ Toca Editar o Borrar arriba');" title="Opciones">⋮</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function clearAllInventory() {
+            if (products.length === 0) return;
+            if (confirm('¿Borrar TODOS los productos registrados en el software?')) {
+                products = [];
+                warehouseBatches = [];
+                selectedProduct = null;
+                deselectInventoryRow();
+                saveAllToComputer();
+                renderInventoryTable();
+                renderSearchResults('');
+                showToast('🗑️ Inventario general borrado');
+            }
+        }
+
+        // SELECCIÓN AL TOCAR FACTURA EN HISTORIAL (EDITAR / BORRAR)
+        function selectSaleRow(id) {
+            selectedSaleRowId = id;
+            const sale = salesHistory.find(s => s.id === id);
+            if (!sale) return;
+            document.getElementById('ctxSaleNum').textContent = `${sale.invoiceNumber} (${sale.clientName})`;
+            document.getElementById('saleContextualBar').classList.add('visible');
+            renderSalesHistoryTable();
+        }
+
+        function deselectSaleRow() {
+            selectedSaleRowId = null;
+            document.getElementById('saleContextualBar').classList.remove('visible');
+            renderSalesHistoryTable();
+        }
+
+        function editSelectedSaleInvoice() {
+            if (!selectedSaleRowId) return;
+            const sale = salesHistory.find(s => s.id === selectedSaleRowId);
+            if (!sale) return;
+            editingSaleId = sale.id;
+            activeInvoiceItems = JSON.parse(JSON.stringify(sale.items));
+            document.getElementById('invNumberInput').value = sale.invoiceNumber;
+            document.getElementById('invDateInput').value = sale.date;
+            document.getElementById('invClientName').value = sale.clientName;
+            document.getElementById('invClientNit').value = sale.clientNit;
+            goToSlide(2);
+            showToast(`✏️ Factura ${sale.invoiceNumber} abierta para editar`);
+        }
+
+        function deleteSelectedSaleInvoice() {
+            if (!selectedSaleRowId) return;
+            const sale = salesHistory.find(s => s.id === selectedSaleRowId);
+            if (!sale) return;
+            if (confirm(`¿Borrar la factura ${sale.invoiceNumber}?`)) {
+                salesHistory = salesHistory.filter(s => s.id !== selectedSaleRowId);
+                selectedSaleRowId = null;
+                document.getElementById('saleContextualBar').classList.remove('visible');
+                saveAllToComputer();
+                renderSalesHistoryTable();
+                showToast('🗑️ Factura borrada');
+            }
+        }
+
+        function renderSalesHistoryTable() {
+            const tbody = document.getElementById('salesHistoryTableBody');
+            if (salesHistory.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1rem;">No hay facturas guardadas aún.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = salesHistory.map(s => {
+                const isSelected = selectedSaleRowId === s.id;
+                return `
+                    <tr class="clickable-row ${isSelected ? 'selected-row' : ''}" onclick="selectSaleRow(${s.id})">
+                        <td><strong>${s.invoiceNumber}</strong></td>
+                        <td>${s.date}</td>
+                        <td>${s.clientName}</td>
+                        <td><strong>${formatMoney(s.total)}</strong></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function clearAllSalesHistory() {
+            if (salesHistory.length === 0) return;
+            if (confirm('¿Borrar TODAS las facturas del historial?')) {
+                salesHistory = [];
+                deselectSaleRow();
+                saveAllToComputer();
+                renderSalesHistoryTable();
+                showToast('🗑️ Historial general de facturas borrado');
+            }
+        }
+
+        // =========================================================================
+        // SECCIÓN 3: FACTURA EDITABLE + LOGO PERSISTENTE + IMPRESIÓN
+        // =========================================================================
+        function loadStoreConfigInputs() {
+            document.getElementById('cfgStoreName').value = storeConfig.name || '';
+            document.getElementById('cfgStoreNit').value = storeConfig.nit || '';
+            document.getElementById('cfgStoreInfo').value = storeConfig.info || '';
+            document.getElementById('invDateInput').value = new Date().toISOString().slice(0, 10);
+            syncInvoicePreview();
+        }
+
+        function saveStoreConfig() {
+            storeConfig.name = document.getElementById('cfgStoreName').value;
+            storeConfig.nit = document.getElementById('cfgStoreNit').value;
+            storeConfig.info = document.getElementById('cfgStoreInfo').value;
+            saveAllToComputer();
+            syncInvoicePreview();
+        }
+
+        function uploadStoreLogo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                storeConfig.logoDataUrl = e.target.result;
+                saveAllToComputer();
+                syncInvoicePreview();
+                showToast('🖼️ Logotipo guardado permanentemente en la factura');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeStoreLogo() {
+            storeConfig.logoDataUrl = '';
+            document.getElementById('cfgLogoFile').value = '';
+            saveAllToComputer();
+            syncInvoicePreview();
+            showToast('🗑️ Logotipo quitado');
+        }
+
+        function updateInvoiceItemQty(idx, newQty) {
+            const targetList = activeInvoiceItems.length > 0 ? activeInvoiceItems : currentCart;
+            if (!targetList[idx]) return;
+            const q = parseFloat(newQty) || 0;
+            if (q <= 0) return;
+            targetList[idx].qty = q;
+            targetList[idx].subtotal = q * targetList[idx].unitPrice;
+            syncInvoicePreview();
+            if (currentCart.length > 0) renderCartTable();
+        }
+
+        function removeInvoiceItemRow(idx) {
+            if (activeInvoiceItems.length > 0) {
+                activeInvoiceItems.splice(idx, 1);
+            } else if (currentCart.length > 0) {
+                currentCart.splice(idx, 1);
+                renderCartTable();
+            }
+            syncInvoicePreview();
+        }
+
+        function saveEditedInvoiceChanges() {
+            if (!editingSaleId) return showToast('ℹ️ Los datos ya están sincronizados');
+            const idx = salesHistory.findIndex(s => s.id === editingSaleId);
+            if (idx !== -1) {
+                const newTotal = activeInvoiceItems.reduce((sum, i) => sum + i.subtotal, 0);
+                salesHistory[idx].invoiceNumber = document.getElementById('invNumberInput').value.trim() || salesHistory[idx].invoiceNumber;
+                salesHistory[idx].date = document.getElementById('invDateInput').value || salesHistory[idx].date;
+                salesHistory[idx].clientName = document.getElementById('invClientName').value.trim() || 'Cliente General';
+                salesHistory[idx].clientNit = document.getElementById('invClientNit').value.trim() || 'N/A';
+                salesHistory[idx].items = JSON.parse(JSON.stringify(activeInvoiceItems));
+                salesHistory[idx].total = newTotal;
+                saveAllToComputer();
+                renderSalesHistoryTable();
+                showToast('💾 Cambios guardados en la factura');
+            }
+        }
+
+        function syncInvoicePreview() {
+            document.getElementById('previewStoreName').textContent = storeConfig.name.trim() || 'NOMBRE DE TU FERRETERÍA';
+            document.getElementById('previewStoreNit').textContent = storeConfig.nit.trim() ? `NIT / Registro Tributario: ${storeConfig.nit}` : 'NIT / Registro Tributario: --';
+            document.getElementById('previewStoreInfo').textContent = storeConfig.info.trim() || 'Dirección y Teléfono del Negocio';
+
+            const logoImg = document.getElementById('previewStoreLogo');
+            if (storeConfig.logoDataUrl) {
+                logoImg.src = storeConfig.logoDataUrl;
+                logoImg.style.display = 'block';
+            } else {
+                logoImg.style.display = 'none';
+            }
+
+            document.getElementById('previewClientName').textContent = document.getElementById('invClientName').value.trim() || 'Cliente General';
+            document.getElementById('previewClientNit').textContent = document.getElementById('invClientNit').value.trim() || 'N/A';
+            document.getElementById('previewInvDate').textContent = document.getElementById('invDateInput').value || '--';
+            document.getElementById('previewInvNumber').textContent = document.getElementById('invNumberInput').value.trim() || 'FAC-0001';
+
+            const itemsToShow = activeInvoiceItems.length > 0 ? activeInvoiceItems : currentCart;
+            const tbody = document.getElementById('previewInvoiceItems');
+
+            if (itemsToShow.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8; padding: 1.25rem;">Agrega productos en la Sección 1 para que aparezcan aquí en la factura.</td></tr>`;
+                document.getElementById('previewInvTotal').textContent = '$0';
+                calcChange();
+                return;
+            }
+
+            let total = 0;
+            tbody.innerHTML = itemsToShow.map((item, idx) => {
+                total += item.subtotal;
+                return `
+                    <tr>
+                        <td><strong>${item.name}</strong></td>
+                        <td>${item.measureLabel}</td>
+                        <td>
+                            <input type="number" value="${item.qty}" min="0.1" step="any" style="width: 55px; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-weight: 700;" onchange="updateInvoiceItemQty(${idx}, this.value)">
+                        </td>
+                        <td>${formatMoney(item.unitPrice)}</td>
+                        <td style="text-align: right;"><strong>${formatMoney(item.subtotal)}</strong></td>
+                        <td><button class="btn-danger-sm" style="padding: 1px 5px;" onclick="removeInvoiceItemRow(${idx})" title="Quitar ítem">✕</button></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('previewInvTotal').textContent = formatMoney(total);
+            calcChange();
+        }
+
+        function calcChange() {
+            const totalText = document.getElementById('previewInvTotal').textContent.replace(/[^0-9]/g, '');
+            const totalVal = parseFloat(totalText) || 0;
+            const cashVal = parseFloat(document.getElementById('cashReceivedInput').value) || 0;
+            const change = cashVal - totalVal;
+
+            if (cashVal > 0 && change >= 0) {
+                document.getElementById('changeOutput').textContent = formatMoney(change);
+            } else if (cashVal > 0 && change < 0) {
+                document.getElementById('changeOutput').textContent = 'Faltan ' + formatMoney(Math.abs(change));
+            } else {
+                document.getElementById('changeOutput').textContent = '$0';
+            }
+        }
+
+        function clearCurrentInvoice() {
+            activeInvoiceItems = [];
+            editingSaleId = null;
+            document.getElementById('cashReceivedInput').value = '';
+            document.getElementById('changeOutput').textContent = '$0';
+            syncInvoicePreview();
+            showToast('🗑️ Factura limpiada');
+        }
+
+        // =========================================================================
+        // SECCIÓN 4: BODEGA Y CONTROL INTELIGENTE DE LOTES EN RESERVA (FIFO)
+        // =========================================================================
+        function populateWarehouseProductDropdown() {
+            const sel = document.getElementById('whProductSelect');
+            const currentVal = sel.value;
+            sel.innerHTML = `<option value="">-- Elige un producto registrado --</option>` +
+                products.map(p => `<option value="${p.id}">${p.name} (Mostrador: ${p.stockBase} ${pluralizeEs(p.baseUnit)} @ ${formatMoney(p.basePrice)})</option>`).join('');
+            if (currentVal) sel.value = currentVal;
+        }
+
+        function onWarehouseProductChange() {
+            const id = Number(document.getElementById('whProductSelect').value);
+            const banner = document.getElementById('whCurrentPriceBanner');
+            if (!id) {
+                banner.style.display = 'none';
+                return;
+            }
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+
+            banner.style.display = 'block';
+            document.getElementById('whCurrBasePrice').textContent = formatMoney(prod.basePrice);
+            document.getElementById('whCurrPackPrice').textContent = formatMoney(prod.packPrice);
+            document.getElementById('whUnitsPerPack').value = prod.unitsPerPack;
+            document.getElementById('whNewBasePrice').value = prod.basePrice;
+            document.getElementById('whNewPackPrice').value = prod.packPrice;
+        }
+
+        function calcWarehousePreview() {
+            const lots = parseFloat(document.getElementById('whLotsCount').value) || 0;
+            const upp = parseFloat(document.getElementById('whUnitsPerPack').value) || 0;
+            const cost = parseFloat(document.getElementById('whLotCost').value) || 0;
+            const margin = parseFloat(document.getElementById('whMarginPct').value) || 0;
+            const totalU = lots * upp;
+
+            if (cost > 0 && totalU > 0) {
+                const uCost = cost / totalU;
+                const uSell = Math.round(uCost * (1 + margin / 100));
+                const lSell = Math.round(uSell * upp);
+                document.getElementById('whNewBasePrice').value = uSell;
+                document.getElementById('whNewPackPrice').value = lSell;
+            }
+        }
+
+        function handleAddWarehouseBatch(e) {
+            e.preventDefault();
+            const prodId = Number(document.getElementById('whProductSelect').value);
+            const prod = products.find(p => p.id === prodId);
+            if (!prod) return showToast('⚠️ Selecciona un producto válido');
+
+            const lotsCount = parseFloat(document.getElementById('whLotsCount').value) || 0;
+            const unitsPerPack = parseFloat(document.getElementById('whUnitsPerPack').value) || 1;
+            const totalBaseUnits = Number((lotsCount * unitsPerPack).toFixed(3));
+            const newBasePrice = parseFloat(document.getElementById('whNewBasePrice').value) || 0;
+            const newPackPrice = parseFloat(document.getElementById('whNewPackPrice').value) || 0;
+
+            if (totalBaseUnits <= 0) return showToast('⚠️ La cantidad debe ser mayor a 0');
+
+            // Si el producto en mostrador está en 0 y el nuevo pedido tiene el MISMO precio, entra directo
+            if (prod.stockBase === 0 && prod.basePrice === newBasePrice && prod.packPrice === newPackPrice) {
+                prod.stockBase = totalBaseUnits;
+                prod.unitsPerPack = unitsPerPack;
+                saveAllToComputer();
+                renderWarehouseTable();
+                populateWarehouseProductDropdown();
+                document.getElementById('warehouseBatchForm').reset();
+                document.getElementById('whCurrentPriceBanner').style.display = 'none';
+                showToast(`✅ Mismo precio y mostrador vacío: ${totalBaseUnits} ${pluralizeEs(prod.baseUnit)} pasaron directo a venta.`);
+                return;
+            }
+
+            warehouseBatches.push({
+                id: Date.now(),
+                productId: prod.id,
+                productName: prod.name,
+                baseUnit: prod.baseUnit,
+                lotsCount,
+                unitsPerPack,
+                totalBaseUnits,
+                newBasePrice,
+                newPackPrice,
+                createdAt: new Date().toISOString().slice(0, 10)
+            });
+
+            saveAllToComputer();
+            renderWarehouseTable();
+            populateWarehouseProductDropdown();
+            document.getElementById('warehouseBatchForm').reset();
+            document.getElementById('whCurrentPriceBanner').style.display = 'none';
+            showToast('📥 Pedido guardado en bodega. Se activará cuando termine el lote actual.');
+        }
+
+        let pendingActivationBatchId = null;
+
+        function renderWarehouseTable() {
+            const tbody = document.getElementById('warehouseTableBody');
+            const alertBox = document.getElementById('fifoPriceAlertBox');
+
+            // Detectar si algún producto ya quedó en 0 en mostrador y tiene un lote nuevo con distinto precio
+            const waitingPriceChange = warehouseBatches.find(b => {
+                const p = products.find(pr => pr.id === b.productId);
+                return p && p.stockBase === 0 && (p.basePrice !== b.newBasePrice || p.packPrice !== b.newPackPrice);
+            });
+
+            if (waitingPriceChange) {
+                pendingActivationBatchId = waitingPriceChange.id;
+                document.getElementById('fifoAlertText').textContent = `"${waitingPriceChange.productName}" terminó su lote anterior. Nuevo lote de ${waitingPriceChange.totalBaseUnits} ${pluralizeEs(waitingPriceChange.baseUnit)} listo a ${formatMoney(waitingPriceChange.newBasePrice)} / ${waitingPriceChange.baseUnit}.`;
+                alertBox.style.display = 'flex';
+            } else {
+                pendingActivationBatchId = null;
+                alertBox.style.display = 'none';
+            }
+
+            if (warehouseBatches.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.75rem;">No hay pedidos nuevos esperando en bodega.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = warehouseBatches.map(b => {
+                const prod = products.find(p => p.id === b.productId);
+                const samePrice = prod && prod.basePrice === b.newBasePrice && prod.packPrice === b.newPackPrice;
+                const statusBadge = samePrice
+                    ? `<span class="badge-same">Mismo Precio (Auto-pase)</span>`
+                    : `<span class="badge-diff">Precio Nuevo (Requiere activar)</span>`;
+
+                return `
+                    <tr>
+                        <td><strong>${b.productName}</strong><br><small style="color:var(--text-muted);">Mostrador actual: ${prod ? prod.stockBase : 0}</small></td>
+                        <td><strong>${b.totalBaseUnits} ${pluralizeEs(b.baseUnit)}</strong> (${b.lotsCount} Lotes)</td>
+                        <td style="color: var(--accent-hover); font-weight: 800;">${formatMoney(b.newBasePrice)}</td>
+                        <td style="color: var(--success); font-weight: 800;">${formatMoney(b.newPackPrice)}</td>
+                        <td>${statusBadge}</td>
+                        <td style="display:flex; gap:0.3rem;">
+                            <button class="btn btn-success" style="padding:0.25rem 0.5rem; font-size:0.7rem;" onclick="promoteBatchNow(${b.id})" title="Pasar este lote a mostrador ahora">⚡ Activar</button>
+                            <button class="btn-danger-sm" style="padding:0.25rem 0.45rem;" onclick="deleteWarehouseBatch(${b.id})" title="Borrar lote en reserva">✕</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function activateNextPriceBatch() {
+            if (!pendingActivationBatchId) return;
+            promoteBatchNow(pendingActivationBatchId);
+        }
+
+        function promoteBatchNow(batchId) {
+            const idx = warehouseBatches.findIndex(b => b.id === batchId);
+            if (idx === -1) return;
+            const batch = warehouseBatches[idx];
+            const prod = products.find(p => p.id === batch.productId);
+            if (!prod) return;
+
+            if (prod.stockBase > 0 && (prod.basePrice !== batch.newBasePrice || prod.packPrice !== batch.newPackPrice)) {
+                if (!confirm(`Todavía quedan ${prod.stockBase} ${pluralizeEs(prod.baseUnit)} del lote anterior a ${formatMoney(prod.basePrice)}. ¿Deseas sumar este lote ahora y actualizar el precio a ${formatMoney(batch.newBasePrice)}?`)) {
+                    return;
+                }
+            }
+
+            prod.stockBase = Number((prod.stockBase + batch.totalBaseUnits).toFixed(3));
+            prod.unitsPerPack = batch.unitsPerPack;
+            prod.basePrice = batch.newBasePrice;
+            prod.packPrice = batch.newPackPrice;
+
+            warehouseBatches.splice(idx, 1);
+            saveAllToComputer();
+            renderWarehouseTable();
+            populateWarehouseProductDropdown();
+            renderSearchResults(searchInput.value);
+            showToast(`✅ Lote activado para "${prod.name}" a ${formatMoney(prod.basePrice)}`);
+        }
+
+        function deleteWarehouseBatch(batchId) {
+            if (confirm('¿Eliminar este pedido en reserva de bodega?')) {
+                warehouseBatches = warehouseBatches.filter(b => b.id !== batchId);
+                saveAllToComputer();
+                renderWarehouseTable();
+                showToast('🗑️ Pedido de bodega eliminado');
+            }
+        }
+
+        function clearAllWarehouseBatches() {
+            if (warehouseBatches.length === 0) return;
+            if (confirm('¿Borrar todos los lotes en reserva de bodega?')) {
+                warehouseBatches = [];
+                saveAllToComputer();
+                renderWarehouseTable();
+                showToast('🗑️ Reserva de bodega borrada');
+            }
+        }
+
+        // =========================================================================
+        // RESPALDO EXTERNO JSON
+        // =========================================================================
+        function exportBackup() {
+            const data = { app: "Ferro Farit Gale Pro", products, salesHistory, warehouseBatches, storeConfig };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Ferro_Farit_Gale_Pro_Respaldo_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('💾 Respaldo descargado');
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data.products)) products = data.products;
+                    if (Array.isArray(data.salesHistory)) salesHistory = data.salesHistory;
+                    if (Array.isArray(data.warehouseBatches)) warehouseBatches = data.warehouseBatches;
+                    if (data.storeConfig) storeConfig = data.storeConfig;
+                    saveAllToComputer();
+                    loadStoreConfigInputs();
+                    renderSearchResults(searchInput.value);
+                    renderInventoryTable();
+                    renderSalesHistoryTable();
+                    renderWarehouseTable();
+                    showToast('📂 Respaldo cargado en el computador');
+                } catch (err) {
+                    showToast('⚠️ Error al leer el archivo');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // INICIALIZACIÓN
+        updateGlobalCounters();
+        loadStoreConfigInputs();
+        renderSearchResults();
+        renderCartTable();
+        syncInvoicePreview();
+        calcRegistrationPreview();
+    </script>
+</body>
+</html>
